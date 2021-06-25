@@ -161,7 +161,7 @@ bool isleapYear(const uint8_t y) {
 
 DateTime RTClib::now() {
   Wire.beginTransmission(CLOCK_ADDRESS);
-  Wire.write(0);	// This is the first register address (Seconds)
+  Wire.write((uint8_t) 0);	// This is the first register address (Seconds)
   			// We'll read from here on for 7 bytes: secs reg, minutes reg, hours, days, months and years.
   Wire.endTransmission();
   
@@ -181,7 +181,7 @@ DateTime RTClib::now() {
 
 byte DS3231::getSecond() {
 	Wire.beginTransmission(CLOCK_ADDRESS);
-	Wire.write(0x00);
+	Wire.write((uint8_t) 0x00);
 	Wire.endTransmission();
 
 	Wire.requestFrom(CLOCK_ADDRESS, 1);
@@ -279,7 +279,7 @@ void DS3231::setSecond(byte Second) {
 	// This function also resets the Oscillator Stop Flag, which is set
 	// whenever power is interrupted.
 	Wire.beginTransmission(CLOCK_ADDRESS);
-	Wire.write(0x00);
+	Wire.write((uint8_t) 0x00);
 	Wire.write(decToBcd(Second));	
 	Wire.endTransmission();
 	// Clear OSF flag
