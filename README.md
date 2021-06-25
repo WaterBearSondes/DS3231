@@ -1,5 +1,8 @@
 # DS3231
 
+## Fork
+Cast argument of function Wire.write to uint8_t from generic data type
+
 ## Description
 
 Arduino library for the DS3231 real-time clock (RTC). Abstracts functionality for clock reading, clock setting, and alarms for the DS3231 high-precision real-time clock. This is a splice of [Ayars'](http://hacks.ayars.org/2011/04/ds3231-real-time-clock.html) and [Jeelabs/Ladyada's](https://github.com/adafruit/RTClib) libraries.
