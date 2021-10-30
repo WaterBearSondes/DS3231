@@ -162,10 +162,11 @@ bool isleapYear(const uint8_t y) {
 DateTime RTClib::now() {
   Wire.beginTransmission(CLOCK_ADDRESS);
   Wire.write((uint8_t) 0);	// This is the first register address (Seconds)
-  			// We'll read from here on for 7 bytes: secs reg, minutes reg, hours, days, months and years.
+  // We'll read from here on for 7 bytes: secs reg, minutes reg, hours, days, months and years.
   Wire.endTransmission();
   
-  Wire.requestFrom(CLOCK_ADDRESS, 7);
+  while(!Wire.requestFrom(CLOCK_ADDRESS, 7)){};
+  while(!Wire.available()){}
   uint16_t ss = bcd2bin(Wire.read() & 0x7F);
   uint16_t mm = bcd2bin(Wire.read());
   uint16_t hh = bcd2bin(Wire.read());
@@ -184,7 +185,8 @@ byte DS3231::getSecond() {
 	Wire.write((uint8_t) 0x00);
 	Wire.endTransmission();
 
-	Wire.requestFrom(CLOCK_ADDRESS, 1);
+	while(!Wire.requestFrom(CLOCK_ADDRESS, 1)){};
+	while(!Wire.available()){}
 	return bcdToDec(Wire.read());
 }
 
@@ -193,7 +195,8 @@ byte DS3231::getMinute() {
 	Wire.write(0x01);
 	Wire.endTransmission();
 
-	Wire.requestFrom(CLOCK_ADDRESS, 1);
+	while(!Wire.requestFrom(CLOCK_ADDRESS, 1)){};
+	while(!Wire.available()){}
 	return bcdToDec(Wire.read());
 }
 
@@ -204,7 +207,8 @@ byte DS3231::getHour(bool& h12, bool& PM_time) {
 	Wire.write(0x02);
 	Wire.endTransmission();
 
-	Wire.requestFrom(CLOCK_ADDRESS, 1);
+	while(!Wire.requestFrom(CLOCK_ADDRESS, 1)){};
+	while(!Wire.available()){}
 	temp_buffer = Wire.read();
 	h12 = temp_buffer & 0b01000000;
 	if (h12) {
@@ -221,7 +225,8 @@ byte DS3231::getDoW() {
 	Wire.write(0x03);
 	Wire.endTransmission();
 
-	Wire.requestFrom(CLOCK_ADDRESS, 1);
+	while(!Wire.requestFrom(CLOCK_ADDRESS, 1)){};
+	while(!Wire.available()){}
 	return bcdToDec(Wire.read());
 }
 
@@ -230,7 +235,8 @@ byte DS3231::getDate() {
 	Wire.write(0x04);
 	Wire.endTransmission();
 
-	Wire.requestFrom(CLOCK_ADDRESS, 1);
+	while(!Wire.requestFrom(CLOCK_ADDRESS, 1)){};
+	while(!Wire.available()){}
 	return bcdToDec(Wire.read());
 }
 
@@ -240,7 +246,8 @@ byte DS3231::getMonth(bool& Century) {
 	Wire.write(0x05);
 	Wire.endTransmission();
 
-	Wire.requestFrom(CLOCK_ADDRESS, 1);
+	while(!Wire.requestFrom(CLOCK_ADDRESS, 1)){};
+	while(!Wire.available()){}
 	temp_buffer = Wire.read();
 	Century = temp_buffer & 0b10000000;
 	return (bcdToDec(temp_buffer & 0b01111111)) ;
@@ -251,7 +258,8 @@ byte DS3231::getYear() {
 	Wire.write(0x06);
 	Wire.endTransmission();
 
-	Wire.requestFrom(CLOCK_ADDRESS, 1);
+	while(!Wire.requestFrom(CLOCK_ADDRESS, 1)){};
+	while(!Wire.available()){}
 	return bcdToDec(Wire.read());
 }
 
@@ -308,7 +316,8 @@ void DS3231::setHour(byte Hour) {
 	Wire.beginTransmission(CLOCK_ADDRESS);
 	Wire.write(0x02);
 	Wire.endTransmission();
-	Wire.requestFrom(CLOCK_ADDRESS, 1);
+	while(!Wire.requestFrom(CLOCK_ADDRESS, 1)){};
+	while(!Wire.available()){}
 	h12 = (Wire.read() & 0b01000000);
 	// if h12 is true, it's 12h mode; false is 24h.
 
@@ -382,7 +391,8 @@ void DS3231::setClockMode(bool h12) {
 	Wire.beginTransmission(CLOCK_ADDRESS);
 	Wire.write(0x02);
 	Wire.endTransmission();
-	Wire.requestFrom(CLOCK_ADDRESS, 1);
+	while(!Wire.requestFrom(CLOCK_ADDRESS, 1)){};
+	while(!Wire.available()){}
 	temp_buffer = Wire.read();
 
 	// Set the flag to the requested value:
@@ -413,7 +423,8 @@ float DS3231::getTemperature() {
   Wire.beginTransmission(CLOCK_ADDRESS);
   Wire.write(0x11);
   Wire.endTransmission();
-  Wire.requestFrom(CLOCK_ADDRESS, 2);
+  while(!Wire.requestFrom(CLOCK_ADDRESS, 2)){};
+  while(!Wire.available()){}
 
   // Should I do more "if available" checks here?
   if(Wire.available()) {
@@ -436,7 +447,8 @@ void DS3231::getA1Time(byte& A1Day, byte& A1Hour, byte& A1Minute, byte& A1Second
 	Wire.write(0x07);
 	Wire.endTransmission();
 
-	Wire.requestFrom(CLOCK_ADDRESS, 4);
+	while(!Wire.requestFrom(CLOCK_ADDRESS, 4)){};
+	while(!Wire.available()){}
 
 	temp_buffer	= Wire.read();	// Get A1M1 and A1 Seconds
 	A1Second	= bcdToDec(temp_buffer & 0b01111111);
@@ -480,7 +492,8 @@ void DS3231::getA2Time(byte& A2Day, byte& A2Hour, byte& A2Minute, byte& AlarmBit
 	Wire.write(0x0b);
 	Wire.endTransmission();
 
-	Wire.requestFrom(CLOCK_ADDRESS, 3); 
+	while(!Wire.requestFrom(CLOCK_ADDRESS, 3)){};
+	while(!Wire.available()){}
 	temp_buffer	= Wire.read();	// Get A2M2 and A2 Minutes
 	A2Minute	= bcdToDec(temp_buffer & 0b01111111);
 	// put A2M2 bit in position 4 of DS3231_AlarmBits.
@@ -741,7 +754,8 @@ byte DS3231::readControlByte(bool which) {
 		Wire.write(0x0e);
 	}
 	Wire.endTransmission();
-	Wire.requestFrom(CLOCK_ADDRESS, 1);
+	while(!Wire.requestFrom(CLOCK_ADDRESS, 1)){};
+	while(!Wire.available()){}
 	return Wire.read();	
 }
 
